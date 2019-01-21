@@ -1,0 +1,5 @@
+---
+
+- name: Configure kubernetes master node
+  include: 'master_config.yml'
+  tags: configure_master
