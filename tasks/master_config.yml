@@ -5,8 +5,13 @@
   register: kubeadm_reset
   become: yes
 
+- name: Pre-pull images
+  shell: "kubeadm config images pull -v3"
+  register: pre_pull_images
+  become: yes
+
 - name: "Initialize Master {{ kubernetes_version }}"
-  shell: kubeadm init --apiserver-advertise-address={{ ansible_default_ipv4.address }} --token={{ token }} --kubernetes-version={{ kubernetes_version }} --pod-network-cidr={{ podnet }}
+  shell: kubeadm init --token={{ token }} --token-ttl=0 --pod-network-cidr={{ podnet }}
   register: kubeadm_init
   when: kubeadm_reset is succeeded
   become: yes
@@ -33,7 +38,7 @@
   become: yes
 
 - name: Join Kubernetes Cluster
-  shell: kubeadm join --ignore-preflight-errors=all --token {{ token }} {{ master_name }}:6443 --discovery-token-unsafe-skip-ca-verification
+  shell: kubeadm join --ignore-preflight-errors=all --token {{ token }} {{ groups['kube_masters'][0] }}:6443 --discovery-token-unsafe-skip-ca-verification
   when: kubeadm_reset is succeeded
   register: kubeadm_join
   become: yes
@@ -49,11 +54,11 @@
     state: present
   become: yes
 
-- name: Poke kubelet
-  systemd:
-    name: kubelet
-    state: restarted
-    daemon_reload: yes
-    enabled: yes
-  register: kubelet_poke
-  become: yes
+#- name: Poke kubelet
+#  systemd:
+#    name: kubelet
+#    state: restarted
+#    daemon_reload: yes
+#    enabled: yes
+#  register: kubelet_poke
+#  become: yes
