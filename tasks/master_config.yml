@@ -43,16 +43,16 @@
   register: kubeadm_join
   become: yes
 
-- name: Install Flannel (Networking)
-  shell: "curl -sSL https://rawgit.com/coreos/flannel/{{ flannel_version }}/Documentation/kube-flannel.yml | sed 's/amd64/arm/g' | kubectl create -f -" 
+- name: Install weave (Networking)
+  shell: kubectl apply -f “https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d ‘\n’)” 
   become: yes
 
-- name: Pass bridged IPv4 traffic to iptables' chains
-  sysctl:
-    name: net.bridge.bridge-nf-call-iptables
-    value: 1
-    state: present
-  become: yes
+#- name: Pass bridged IPv4 traffic to iptables' chains
+#  sysctl:
+#    name: net.bridge.bridge-nf-call-iptables
+#    value: 1
+#    state: present
+#  become: yes
 
 #- name: Poke kubelet
 #  systemd:
