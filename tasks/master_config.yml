@@ -44,7 +44,7 @@
   become: yes
 
 - name: Install weave (Networking)
-  shell: kubectl apply -f “https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d ‘\n’)” 
+  shell: kubectl apply -f “https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')” 
   become: yes
 
 #- name: Pass bridged IPv4 traffic to iptables' chains
